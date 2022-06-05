@@ -66,10 +66,10 @@ int main(int argc, char** argv) {
             cv::Point2f destinationCoordinates[4];
             // Preprocess for edge detection
             cv::cvtColor(rawImage, preprocessedImage, cv::COLOR_BGR2GRAY);
-            cv::medianBlur(preprocessedImage, preprocessedImage, 15);
-            cv::threshold(preprocessedImage, preprocessedImage, 0, 255, cv::THRESH_TRIANGLE);
+            cv::medianBlur(preprocessedImage, preprocessedImage, 25);
+            cv::adaptiveThreshold(preprocessedImage, preprocessedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 75, 0);
             // Perform canny edge detection
-            cv::Canny(preprocessedImage, cannyImage, 128, 255);
+            cv::Canny(preprocessedImage, cannyImage, 0, 0);
             // Find contours and their approximations in order to select the largest one 
             cv::findContours(cannyImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
             approximations.resize(contours.size());
@@ -128,6 +128,7 @@ int main(int argc, char** argv) {
             cv::imwrite(FILENAME, processedImage);
             pixbufs[i] = Gdk::Pixbuf::create_from_file(FILENAME);
         }
+        std::remove(FILENAME.c_str());
         imageSorter.setPixbufs(pixbufs);
     });
     saveButton.signal_clicked().connect([&]() {
