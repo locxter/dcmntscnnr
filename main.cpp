@@ -66,7 +66,8 @@ int main(int argc, char** argv) {
             cv::Point2f destinationCoordinates[4];
             // Preprocess for edge detection
             cv::cvtColor(rawImage, preprocessedImage, cv::COLOR_BGR2GRAY);
-            cv::medianBlur(preprocessedImage, preprocessedImage, 75);
+            cv::medianBlur(preprocessedImage, preprocessedImage, 15);
+            cv::threshold(preprocessedImage, preprocessedImage, 0, 255, cv::THRESH_TRIANGLE);
             // Perform canny edge detection
             cv::Canny(preprocessedImage, cannyImage, 128, 255);
             // Find contours and their approximations in order to select the largest one 
