@@ -87,21 +87,21 @@ int main(int argc, char** argv) {
                 }
             }
             // Order the points for perspective transform
-            for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
                 static float xAverage = (approximation[0].x + approximation[1].x + approximation[2].x + approximation[3].x) / 4.0;
                 static float yAverage = (approximation[0].y + approximation[1].y + approximation[2].y + approximation[3].y) / 4.0;
-                if (approximation[i].x < xAverage && approximation[i].y < yAverage) {
+                if (approximation[j].x < xAverage && approximation[j].y < yAverage) {
                     // Top left
-                    sortedApproximation[0] = approximation[i];
-                } else if (approximation[i].x > xAverage && approximation[i].y < yAverage) {
+                    sortedApproximation[0] = approximation[j];
+                } else if (approximation[j].x > xAverage && approximation[j].y < yAverage) {
                     // Top right
-                    sortedApproximation[1] = approximation[i];
-                } else if (approximation[i].x > xAverage && approximation[i].y > yAverage) {
+                    sortedApproximation[1] = approximation[j];
+                } else if (approximation[j].x > xAverage && approximation[j].y > yAverage) {
                     // Bottom right
-                    sortedApproximation[2] = approximation[i];
+                    sortedApproximation[2] = approximation[j];
                 } else {
                     //Bottom left
-                    sortedApproximation[3] = approximation[i];
+                    sortedApproximation[3] = approximation[j];
                 }
             }
             // Calculate utility values for perspective transform
