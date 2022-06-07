@@ -111,10 +111,10 @@ int main(int argc, char** argv) {
             // Calculate utility values for perspective transform
             topWidth = std::sqrt(std::pow(sortedApproximation[1].x - sortedApproximation[0].x, 2) + std::pow(sortedApproximation[1].y - sortedApproximation[0].y, 2));
             bottomWidth = std::sqrt(std::pow(sortedApproximation[2].x - sortedApproximation[3].x, 2) + std::pow(sortedApproximation[2].y - sortedApproximation[3].y, 2));
-            width = (topWidth + bottomWidth) / 2.0;
+            width = std::max(topWidth, bottomWidth);
             leftHeight = std::sqrt(std::pow(sortedApproximation[3].x - sortedApproximation[0].x, 2) + std::pow(sortedApproximation[3].y - sortedApproximation[0].y, 2));
             rightHeight = std::sqrt(std::pow(sortedApproximation[2].x - sortedApproximation[1].x, 2) + std::pow(sortedApproximation[2].y - sortedApproximation[1].y, 2));
-            height = (leftHeight + rightHeight) / 2.0;
+            height = std::max(leftHeight, rightHeight);
             sourceCoordinates[0] = cv::Point2f(sortedApproximation[0].x, sortedApproximation[0].y);
             sourceCoordinates[1] = cv::Point2f(sortedApproximation[1].x, sortedApproximation[1].y);
             sourceCoordinates[2] = cv::Point2f(sortedApproximation[2].x, sortedApproximation[2].y);
