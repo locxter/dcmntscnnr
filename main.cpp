@@ -68,6 +68,7 @@ int main(int argc, char** argv) {
             cv::cvtColor(rawImage, preprocessedImage, cv::COLOR_BGR2GRAY);
             cv::medianBlur(preprocessedImage, preprocessedImage, 25);
             cv::adaptiveThreshold(preprocessedImage, preprocessedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 75, 0);
+            cv::medianBlur(preprocessedImage, preprocessedImage, 25);
             // Perform canny edge detection
             cv::Canny(preprocessedImage, cannyImage, 0, 0);
             // Find contours and their approximations in order to select the largest one 
@@ -81,7 +82,7 @@ int main(int argc, char** argv) {
                 if (j == 0) {
                     largestArea = 0;
                 }
-                if (area > largestArea && approximations[j].size() == 4) {
+                if (area > largestArea && cv::isContourConvex(approximations[j]) && approximations[j].size() == 4) {
                     approximation = approximations[j];
                     largestArea = area;
                 }
@@ -128,7 +129,7 @@ int main(int argc, char** argv) {
             cv::warpPerspective(rawImage, processedImage, transformationMatrix, cv::Size(width, height));
             // Clean the result
             cv::cvtColor(processedImage, processedImage, cv::COLOR_BGR2GRAY);
-            cv::adaptiveThreshold(processedImage, processedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 75, 25);
+            cv::adaptiveThreshold(processedImage, processedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 125, 25);
             cv::imwrite(FILENAME, processedImage);
             pixbufs[i] = Gdk::Pixbuf::create_from_file(FILENAME);
         }
