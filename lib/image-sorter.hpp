@@ -3,7 +3,7 @@
 #include <iostream>
 #include <gtkmm-3.0/gtkmm.h>
 
-// ImageSorter class
+// Image sorter class
 class ImageSorter : public Gtk::ScrolledWindow {
     private:
     // Attributes
