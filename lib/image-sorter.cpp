@@ -18,6 +18,8 @@ void ImageSorter::setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs) {
     // Create the grid
     for (int i = 0; i < pixbufs.size(); i++) {
         Gtk::DrawingArea* drawingArea = new Gtk::DrawingArea;
+        Gtk::Button* rotateLeftButton = new Gtk::Button;
+        Gtk::Button* rotateRightButton = new Gtk::Button;
         // Fill the available space
         drawingArea->set_vexpand(true);
         drawingArea->signal_draw().connect([=](const Cairo::RefPtr<Cairo::Context>& context) -> bool {
@@ -29,6 +31,20 @@ void ImageSorter::setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs) {
             return false;
         });
         grid.attach(*drawingArea, i * 2, 0, 2);
+        // Rotate the image left when clicked
+        rotateLeftButton->set_image_from_icon_name("object-rotate-left-symbolic");
+        rotateLeftButton->signal_clicked().connect([=]() {
+            this->pixbufs[i] = this->pixbufs[i]->rotate_simple(Gdk::PIXBUF_ROTATE_COUNTERCLOCKWISE);
+            this->grid.queue_draw();
+        });
+        grid.attach(*rotateLeftButton, i * 2, 1);
+        rotateRightButton->set_image_from_icon_name("object-rotate-right-symbolic");
+        // Rotate the image right when clicked
+        rotateRightButton->signal_clicked().connect([=]() {
+            this->pixbufs[i] = this->pixbufs[i]->rotate_simple(Gdk::PIXBUF_ROTATE_CLOCKWISE);
+            this->grid.queue_draw();
+        });
+        grid.attach(*rotateRightButton, i * 2 + 1, 1);
         if (i > 0) {
             Gtk::Button* leftButton = new Gtk::Button;
             leftButton->set_image_from_icon_name("go-previous-symbolic");
@@ -40,9 +56,9 @@ void ImageSorter::setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs) {
                 this->grid.queue_draw();
             });
             if (i == pixbufs.size() - 1) {
-                grid.attach(*leftButton, i * 2, 1, 2);
+                grid.attach(*leftButton, i * 2, 2, 2);
             } else {
-                grid.attach(*leftButton, i * 2, 1);
+                grid.attach(*leftButton, i * 2, 2);
             }
         }
         if (i < pixbufs.size() - 1) {
@@ -56,9 +72,9 @@ void ImageSorter::setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs) {
                 this->grid.queue_draw();
             });
             if (i == 0) {
-                grid.attach(*rightButton, i * 2, 1, 2);
+                grid.attach(*rightButton, i * 2, 2, 2);
             } else {
-                grid.attach(*rightButton, i * 2 + 1, 1);
+                grid.attach(*rightButton, i * 2 + 1, 2);
             }
         }
 
