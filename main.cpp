@@ -1,6 +1,5 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include <gtkmm-3.0/gtkmm.h>
 #include "lib/image-sorter.hpp"
 
 // Main function
