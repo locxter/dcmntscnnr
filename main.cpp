@@ -5,7 +5,7 @@
 // Main function
 int main(int argc, char** argv) {
     // UI components
-    Glib::RefPtr<Gtk::Application> app = Gtk::Application::create(argc, argv, "com.github.locxter.dcmntscnnr");
+    Glib::RefPtr<Gtk::Application> app = Gtk::Application::create("com.github.locxter.dcmntscnnr");
     Gtk::Window window;
     Gtk::Grid grid;
     Gtk::Button openButton("Open");
