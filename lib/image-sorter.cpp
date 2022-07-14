@@ -21,33 +21,32 @@ void ImageSorter::setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs) {
         Gtk::Button* rotateLeftButton = new Gtk::Button;
         Gtk::Button* rotateRightButton = new Gtk::Button;
         // Fill the available space
-        drawingArea->set_vexpand(true);
         drawingArea->signal_draw().connect([=](const Cairo::RefPtr<Cairo::Context>& context) -> bool {
             int height = drawingArea->get_height();
             float ratio = this->pixbufs[i]->get_width() / (float) this->pixbufs[i]->get_height();
             Gdk::Cairo::set_source_pixbuf(context, this->pixbufs[i]->scale_simple(ratio * height, height, Gdk::INTERP_BILINEAR));
             context->paint();
             drawingArea->set_size_request(ratio * height, 0);
-            return false;
+            return true;
         });
+        drawingArea->set_vexpand(true);
         grid.attach(*drawingArea, i * 2, 0, 2);
         // Rotate the image left when clicked
-        rotateLeftButton->set_image_from_icon_name("object-rotate-left-symbolic");
         rotateLeftButton->signal_clicked().connect([=]() {
             this->pixbufs[i] = this->pixbufs[i]->rotate_simple(Gdk::PIXBUF_ROTATE_COUNTERCLOCKWISE);
             this->grid.queue_draw();
         });
+        rotateLeftButton->set_image_from_icon_name("object-rotate-left-symbolic");
         grid.attach(*rotateLeftButton, i * 2, 1);
-        rotateRightButton->set_image_from_icon_name("object-rotate-right-symbolic");
         // Rotate the image right when clicked
         rotateRightButton->signal_clicked().connect([=]() {
             this->pixbufs[i] = this->pixbufs[i]->rotate_simple(Gdk::PIXBUF_ROTATE_CLOCKWISE);
             this->grid.queue_draw();
         });
+        rotateRightButton->set_image_from_icon_name("object-rotate-right-symbolic");
         grid.attach(*rotateRightButton, i * 2 + 1, 1);
         if (i > 0) {
             Gtk::Button* leftButton = new Gtk::Button;
-            leftButton->set_image_from_icon_name("go-previous-symbolic");
             // Move the image left when clicked
             leftButton->signal_clicked().connect([=]() {
                 Glib::RefPtr<Gdk::Pixbuf> buffer = this->pixbufs[i];
@@ -55,6 +54,7 @@ void ImageSorter::setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs) {
                 this->pixbufs.insert(this->pixbufs.begin() + (i - 1), buffer);
                 this->grid.queue_draw();
             });
+            leftButton->set_image_from_icon_name("go-previous-symbolic");
             if (i == pixbufs.size() - 1) {
                 grid.attach(*leftButton, i * 2, 2, 2);
             } else {
@@ -63,7 +63,6 @@ void ImageSorter::setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs) {
         }
         if (i < pixbufs.size() - 1) {
             Gtk::Button* rightButton = new Gtk::Button;
-            rightButton->set_image_from_icon_name("go-next-symbolic");
             // Move the image right when clicked
             rightButton->signal_clicked().connect([=]() {
                 Glib::RefPtr<Gdk::Pixbuf> buffer = this->pixbufs[i];
@@ -71,6 +70,7 @@ void ImageSorter::setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs) {
                 this->pixbufs.insert(this->pixbufs.begin() + (i + 1), buffer);
                 this->grid.queue_draw();
             });
+            rightButton->set_image_from_icon_name("go-next-symbolic");
             if (i == 0) {
                 grid.attach(*rightButton, i * 2, 2, 2);
             } else {
