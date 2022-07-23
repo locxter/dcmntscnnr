@@ -4,7 +4,7 @@
 
 ![Overview image](overview.png)
 
-This is a very simple GUI program for scanning documents.
+This is a GUI program for scanning documents.
 
 ## Dependencies
 
