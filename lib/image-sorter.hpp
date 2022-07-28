@@ -1,16 +1,16 @@
-#ifndef LIBSERIAL_HELPERS
-#define LIBSERIAL_HELPERS
+#ifndef IMAGE_SORTER
+#define IMAGE_SORTER
 #include <iostream>
 #include <gtkmm-3.0/gtkmm.h>
 
 // Image sorter class
 class ImageSorter : public Gtk::ScrolledWindow {
-    private:
+private:
     // Attributes
     Gtk::Grid grid;
     std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs;
 
-    public:
+public:
     // Constructor
     ImageSorter();
 
