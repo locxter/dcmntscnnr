@@ -129,15 +129,22 @@ int main(int argc, char** argv) {
             // Clean the result
             cv::cvtColor(processedImage, processedImage, cv::COLOR_BGR2GRAY);
             cv::adaptiveThreshold(processedImage, processedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 125, 25);
+            // Update the image sorter
             cv::imwrite(FILENAME, processedImage);
             pixbufs[i] = Gdk::Pixbuf::create_from_file(FILENAME);
+            imageSorter.setPixbufs(pixbufs);
+            while (Gtk::Main::events_pending()) {
+                Gtk::Main::iteration();
+            }
         }
         std::remove(FILENAME.c_str());
-        imageSorter.setPixbufs(pixbufs);
     });
     saveButton.signal_clicked().connect([&]() {
         Gtk::FileChooserDialog dialog("Save", Gtk::FILE_CHOOSER_ACTION_SAVE);
         Glib::RefPtr<Gtk::FileFilter> fileFilter = Gtk::FileFilter::create();
+        const int PAGE_WIDTH = 210;
+        const int PAGE_HEIGHT = 297;
+        const float MM_TO_PT_RATIO = 72 / 25.4;
         // Configure file filter and dialog
         fileFilter->set_name("PDF documents");
         fileFilter->add_pattern("*.pdf");
@@ -152,14 +159,15 @@ int main(int argc, char** argv) {
             // Handle the response
             if (response == Gtk::RESPONSE_OK) {
                 std::string filename = dialog.get_filename();
-                Cairo::RefPtr<Cairo::PdfSurface> surface = Cairo::PdfSurface::create(filename, 0, 0);
+                Cairo::RefPtr<Cairo::PdfSurface> surface = Cairo::PdfSurface::create(filename, std::round(PAGE_WIDTH * MM_TO_PT_RATIO), std::round(PAGE_HEIGHT * MM_TO_PT_RATIO));
                 Cairo::RefPtr<Cairo::Context> context = Cairo::Context::create(surface);
                 // Write file
                 for (Glib::RefPtr<Gdk::Pixbuf> pixbuf : pixbufs) {
-                    surface->set_size(pixbuf->get_width(), pixbuf->get_height());
+                    context->scale((PAGE_WIDTH * MM_TO_PT_RATIO) / pixbuf->get_width(), (PAGE_HEIGHT * MM_TO_PT_RATIO) / pixbuf->get_height());
                     Gdk::Cairo::set_source_pixbuf(context, pixbuf);
                     context->paint();
                     context->show_page();
+                    context->scale(1 / ((PAGE_WIDTH * MM_TO_PT_RATIO) / pixbuf->get_width()), 1 / ((PAGE_HEIGHT * MM_TO_PT_RATIO) / pixbuf->get_height()));
                 }
             }
         }
