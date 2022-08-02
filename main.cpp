@@ -142,9 +142,6 @@ int main(int argc, char** argv) {
     saveButton.signal_clicked().connect([&]() {
         Gtk::FileChooserDialog dialog("Save", Gtk::FILE_CHOOSER_ACTION_SAVE);
         Glib::RefPtr<Gtk::FileFilter> fileFilter = Gtk::FileFilter::create();
-        const int PAGE_WIDTH = 210;
-        const int PAGE_HEIGHT = 297;
-        const float MM_TO_PT_RATIO = 72 / 25.4;
         // Configure file filter and dialog
         fileFilter->set_name("PDF documents");
         fileFilter->add_pattern("*.pdf");
@@ -158,16 +155,30 @@ int main(int argc, char** argv) {
             int response = dialog.run();
             // Handle the response
             if (response == Gtk::RESPONSE_OK) {
+                const int PAGE_WIDTH = 210;
+                const int PAGE_HEIGHT = 297;
+                const float MM_TO_PT = 72 / 25.4;
                 std::string filename = dialog.get_filename();
-                Cairo::RefPtr<Cairo::PdfSurface> surface = Cairo::PdfSurface::create(filename, std::round(PAGE_WIDTH * MM_TO_PT_RATIO), std::round(PAGE_HEIGHT * MM_TO_PT_RATIO));
+                Cairo::RefPtr<Cairo::PdfSurface> surface = Cairo::PdfSurface::create(filename, 0, 0);
                 Cairo::RefPtr<Cairo::Context> context = Cairo::Context::create(surface);
                 // Write file
                 for (Glib::RefPtr<Gdk::Pixbuf> pixbuf : pixbufs) {
-                    context->scale((PAGE_WIDTH * MM_TO_PT_RATIO) / pixbuf->get_width(), (PAGE_HEIGHT * MM_TO_PT_RATIO) / pixbuf->get_height());
+                    int pageWidth;
+                    int pageHeight;
+                    // Check for landscape document
+                    if ((float) pixbuf->get_width() / pixbuf->get_height() < ((((float) PAGE_WIDTH / PAGE_HEIGHT)) + (PAGE_HEIGHT / PAGE_WIDTH)) / 2) {
+                        pageWidth = PAGE_WIDTH;
+                        pageHeight = PAGE_HEIGHT;
+                    } else {
+                        pageWidth = PAGE_HEIGHT;
+                        pageHeight = PAGE_WIDTH;
+                    }
+                    surface->set_size(std::round(pageWidth * MM_TO_PT), std::round(pageHeight * MM_TO_PT));
+                    context->scale((pageWidth * MM_TO_PT) / pixbuf->get_width(), (pageHeight * MM_TO_PT) / pixbuf->get_height());
                     Gdk::Cairo::set_source_pixbuf(context, pixbuf);
                     context->paint();
-                    context->show_page();
-                    context->scale(1 / ((PAGE_WIDTH * MM_TO_PT_RATIO) / pixbuf->get_width()), 1 / ((PAGE_HEIGHT * MM_TO_PT_RATIO) / pixbuf->get_height()));
+                    surface->show_page();
+                    context->scale(pixbuf->get_width() / (pageWidth * MM_TO_PT), pixbuf->get_height() / (pageHeight * MM_TO_PT));
                 }
             }
         }
