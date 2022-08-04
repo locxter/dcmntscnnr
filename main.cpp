@@ -166,7 +166,7 @@ int main(int argc, char** argv) {
                     int pageWidth;
                     int pageHeight;
                     // Check for landscape document
-                    if ((float) pixbuf->get_width() / pixbuf->get_height() < ((((float) PAGE_WIDTH / PAGE_HEIGHT)) + (PAGE_HEIGHT / PAGE_WIDTH)) / 2) {
+                    if ((float) pixbuf->get_width() / pixbuf->get_height() < (((float) PAGE_WIDTH / PAGE_HEIGHT) + (PAGE_HEIGHT / PAGE_WIDTH)) / 2) {
                         pageWidth = PAGE_WIDTH;
                         pageHeight = PAGE_HEIGHT;
                     } else {
