@@ -1,6 +1,6 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include "lib/image-sorter.hpp"
+#include "lib/image-previewer.hpp"
 
 // Main function
 int main(int argc, char** argv) {
@@ -11,12 +11,12 @@ int main(int argc, char** argv) {
     Gtk::Button openButton("Open");
     Gtk::Button convertButton("Convert");
     Gtk::Button saveButton("Save");
-    ImageSorter imageSorter;
+    ImagePreviewer imagePreviewer;
     Gtk::Label aboutLabel("2022 locxter");
     std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs;
     // Add functions to the buttons
     openButton.signal_clicked().connect([&]() {
-        Gtk::FileChooserDialog dialog("Open", Gtk::FILE_CHOOSER_ACTION_OPEN);
+        Gtk::FileChooserDialog dialog(window, "Open");
         Glib::RefPtr<Gtk::FileFilter> fileFilter = Gtk::FileFilter::create();
         // Configure file filter and dialog
         fileFilter->set_name("Images");
@@ -24,7 +24,6 @@ int main(int argc, char** argv) {
         fileFilter->add_pattern("*.jpg");
         fileFilter->add_pattern("*.jpeg");
         dialog.add_filter(fileFilter);
-        dialog.set_transient_for(window);
         dialog.set_select_multiple(true);
         dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
         dialog.add_button("Open", Gtk::RESPONSE_OK);
@@ -33,16 +32,17 @@ int main(int argc, char** argv) {
         // Handle the response
         if (response == Gtk::RESPONSE_OK) {
             std::vector<std::string> filenames = dialog.get_filenames();
+            pixbufs = imagePreviewer.getPixbufs();
             // Load files
             for (std::string filename : filenames) {
                 pixbufs.push_back(Gdk::Pixbuf::create_from_file(filename));
             }
-            imageSorter.setPixbufs(pixbufs);
+            imagePreviewer.setPixbufs(pixbufs);
         }
     });
     convertButton.signal_clicked().connect([&]() {
         const std::string FILENAME = ".dcmntscnnr-tmp.png";
-        pixbufs = imageSorter.getPixbufs();
+        pixbufs = imagePreviewer.getPixbufs();
         for (int i = 0; i < pixbufs.size(); i++) {
             pixbufs[i]->save(FILENAME, "png");
             // Image containers
@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
             // Update the image sorter
             cv::imwrite(FILENAME, processedImage);
             pixbufs[i] = Gdk::Pixbuf::create_from_file(FILENAME);
-            imageSorter.setPixbufs(pixbufs);
+            imagePreviewer.setPixbufs(pixbufs);
             while (Gtk::Main::events_pending()) {
                 Gtk::Main::iteration();
             }
@@ -140,16 +140,15 @@ int main(int argc, char** argv) {
         std::remove(FILENAME.c_str());
     });
     saveButton.signal_clicked().connect([&]() {
-        Gtk::FileChooserDialog dialog("Save", Gtk::FILE_CHOOSER_ACTION_SAVE);
+        Gtk::FileChooserDialog dialog(window, "Save", Gtk::FILE_CHOOSER_ACTION_SAVE);
         Glib::RefPtr<Gtk::FileFilter> fileFilter = Gtk::FileFilter::create();
         // Configure file filter and dialog
         fileFilter->set_name("PDF documents");
         fileFilter->add_pattern("*.pdf");
         dialog.add_filter(fileFilter);
-        dialog.set_transient_for(window);
         dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
         dialog.add_button("Save", Gtk::RESPONSE_OK);
-        pixbufs = imageSorter.getPixbufs();
+        pixbufs = imagePreviewer.getPixbufs();
         // Show the dialog and wait for a user response
         if (pixbufs.size() > 0) {
             int response = dialog.run();
@@ -192,9 +191,9 @@ int main(int argc, char** argv) {
     grid.attach(convertButton, 1, 0);
     saveButton.set_hexpand(true);
     grid.attach(saveButton, 2, 0);
-    imageSorter.set_hexpand(true);
-    imageSorter.set_vexpand(true);
-    grid.attach(imageSorter, 0, 1, 3);
+    imagePreviewer.set_hexpand(true);
+    imagePreviewer.set_vexpand(true);
+    grid.attach(imagePreviewer, 0, 1, 3);
     aboutLabel.set_hexpand(true);
     grid.attach(aboutLabel, 0, 2, 3);
     // Create the main window

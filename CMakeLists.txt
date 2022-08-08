@@ -4,7 +4,7 @@ project(dcmntscnnr VERSION 1.0)
 include(CTest)
 enable_testing()
 
-add_executable(dcmntscnnr main.cpp lib/image-sorter.hpp lib/image-sorter.cpp)
+add_executable(dcmntscnnr main.cpp lib/image-previewer.hpp lib/image-previewer.cpp)
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
