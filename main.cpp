@@ -16,8 +16,9 @@ int main(int argc, char** argv) {
     std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs;
     // Add functions to the buttons
     openButton.signal_clicked().connect([&]() {
-        Gtk::FileChooserDialog dialog(window, "Open");
         Glib::RefPtr<Gtk::FileFilter> fileFilter = Gtk::FileFilter::create();
+        Gtk::FileChooserDialog dialog(window, "Open");
+        int response;
         // Configure file filter and dialog
         fileFilter->set_name("Images");
         fileFilter->add_pattern("*.png");
@@ -28,7 +29,7 @@ int main(int argc, char** argv) {
         dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
         dialog.add_button("Open", Gtk::RESPONSE_OK);
         // Show the dialog and wait for a user response
-        int response = dialog.run();
+        response = dialog.run();
         // Handle the response
         if (response == Gtk::RESPONSE_OK) {
             std::vector<std::string> filenames = dialog.get_filenames();
@@ -140,18 +141,19 @@ int main(int argc, char** argv) {
         std::remove(FILENAME.c_str());
     });
     saveButton.signal_clicked().connect([&]() {
-        Gtk::FileChooserDialog dialog(window, "Save", Gtk::FILE_CHOOSER_ACTION_SAVE);
-        Glib::RefPtr<Gtk::FileFilter> fileFilter = Gtk::FileFilter::create();
-        // Configure file filter and dialog
-        fileFilter->set_name("PDF documents");
-        fileFilter->add_pattern("*.pdf");
-        dialog.add_filter(fileFilter);
-        dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
-        dialog.add_button("Save", Gtk::RESPONSE_OK);
-        pixbufs = imagePreviewer.getPixbufs();
-        // Show the dialog and wait for a user response
         if (pixbufs.size() > 0) {
-            int response = dialog.run();
+            Glib::RefPtr<Gtk::FileFilter> fileFilter = Gtk::FileFilter::create();
+            Gtk::FileChooserDialog dialog(window, "Save", Gtk::FILE_CHOOSER_ACTION_SAVE);
+            int response;
+            // Configure file filter and dialog
+            fileFilter->set_name("PDF documents");
+            fileFilter->add_pattern("*.pdf");
+            dialog.add_filter(fileFilter);
+            dialog.add_button("Cancel", Gtk::RESPONSE_CANCEL);
+            dialog.add_button("Save", Gtk::RESPONSE_OK);
+            pixbufs = imagePreviewer.getPixbufs();
+            // Show the dialog and wait for a user response
+            response = dialog.run();
             // Handle the response
             if (response == Gtk::RESPONSE_OK) {
                 const int PAGE_WIDTH = 210;
