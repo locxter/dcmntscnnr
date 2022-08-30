@@ -166,20 +166,30 @@ int main(int argc, char** argv) {
                 for (Glib::RefPtr<Gdk::Pixbuf> pixbuf : pixbufs) {
                     int pageWidth;
                     int pageHeight;
+                    int pixbufWidth = pixbuf->get_width();
+                    int pixbufHeight = pixbuf->get_height();
+                    float scalingRatio;
+                    context->save();
                     // Check for landscape document
-                    if ((float) pixbuf->get_width() / pixbuf->get_height() < (((float) PAGE_WIDTH / PAGE_HEIGHT) + (PAGE_HEIGHT / PAGE_WIDTH)) / 2) {
+                    if ((float) pixbufWidth / pixbufHeight < (((float) PAGE_WIDTH / PAGE_HEIGHT) + (PAGE_HEIGHT / PAGE_WIDTH)) / 2) {
                         pageWidth = PAGE_WIDTH;
                         pageHeight = PAGE_HEIGHT;
                     } else {
                         pageWidth = PAGE_HEIGHT;
                         pageHeight = PAGE_WIDTH;
                     }
-                    surface->set_size(std::round(pageWidth * MM_TO_PT), std::round(pageHeight * MM_TO_PT));
-                    context->scale((pageWidth * MM_TO_PT) / pixbuf->get_width(), (pageHeight * MM_TO_PT) / pixbuf->get_height());
+                    // Calculate the scaling ratio
+                    if ((float) pageWidth / pageHeight > (float) pixbufWidth / pixbufHeight) {
+                        scalingRatio = (pageHeight * MM_TO_PT) / pixbufHeight;
+                    } else {
+                        scalingRatio = (pageWidth * MM_TO_PT) / pixbufWidth;
+                    }
+                    surface->set_size(std::round(pixbufWidth * scalingRatio), std::round(pixbufHeight * scalingRatio));
+                    context->scale(scalingRatio, scalingRatio);
                     Gdk::Cairo::set_source_pixbuf(context, pixbuf);
                     context->paint();
                     surface->show_page();
-                    context->scale(pixbuf->get_width() / (pageWidth * MM_TO_PT), pixbuf->get_height() / (pageHeight * MM_TO_PT));
+                    context->restore();
                 }
             }
         }
