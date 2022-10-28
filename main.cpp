@@ -6,6 +6,7 @@
 int main(int argc, char** argv) {
     // UI components
     Glib::RefPtr<Gtk::Application> app = Gtk::Application::create("com.github.locxter.dcmntscnnr");
+    Glib::RefPtr<Gtk::Settings> settings = Gtk::Settings::get_default();
     Gtk::Window window;
     Gtk::Grid grid;
     Gtk::Button openButton("Open");
@@ -71,7 +72,7 @@ int main(int argc, char** argv) {
             cv::medianBlur(preprocessedImage, preprocessedImage, 25);
             // Perform canny edge detection
             cv::Canny(preprocessedImage, cannyImage, 0, 0);
-            // Find contours and their approximations in order to select the largest one 
+            // Find contours and their approximations in order to select the largest one
             cv::findContours(cannyImage, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
             approximations.resize(contours.size());
             for (int j = 0; j < contours.size(); j++) {
@@ -105,7 +106,7 @@ int main(int argc, char** argv) {
                     // Bottom right
                     sortedApproximation[2] = approximation[j];
                 } else {
-                    //Bottom left
+                    // Bottom left
                     sortedApproximation[3] = approximation[j];
                 }
             }
@@ -209,6 +210,7 @@ int main(int argc, char** argv) {
     aboutLabel.set_hexpand(true);
     grid.attach(aboutLabel, 0, 2, 3);
     // Create the main window
+    settings->set_property("gtk-application-prefer-dark-theme", true);
     window.set_title("dcmntscnnr");
     window.set_border_width(10);
     window.set_default_size(640, 640);
