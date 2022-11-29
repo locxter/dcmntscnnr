@@ -2,6 +2,8 @@
 #define IMAGE_PREVIEWER
 #include <iostream>
 #include <gtkmm-3.0/gtkmm.h>
+#include "image.hpp"
+#include "image-cropper.hpp"
 
 // Image previewer class
 class ImagePreviewer : public Gtk::ScrolledWindow {
@@ -14,15 +16,19 @@ class ImagePreviewer : public Gtk::ScrolledWindow {
     std::vector<Gtk::Button> rotateRightButtons;
     std::vector<Gtk::Button> moveLeftButtons;
     std::vector<Gtk::Button> moveRightButtons;
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs;
+    std::vector<Gtk::Button> cropButtons;
+    std::vector<Image> images;
 
     public:
-    // Constructor
+    // Constructors
     ImagePreviewer();
 
-    // Getter and setter
-    std::vector<Glib::RefPtr<Gdk::Pixbuf>> getPixbufs();
+    ImagePreviewer(std::vector<Image> images);
 
-    void setPixbufs(std::vector<Glib::RefPtr<Gdk::Pixbuf>> pixbufs);
+    // Getter and setter
+
+    std::vector<Image> getImages();
+
+    void setImages(std::vector<Image> images);
 };
 #endif
