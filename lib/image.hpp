@@ -1,8 +1,8 @@
 #ifndef IMAGE
 #define IMAGE
-#include <iostream>
-#include <gtkmm-3.0/gtkmm.h>
 #include "image.hpp"
+#include <gtkmm-3.0/gtkmm.h>
+#include <iostream>
 
 // Image previewer class
 class Image {

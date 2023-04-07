@@ -1,8 +1,8 @@
 #ifndef IMAGE_CROPPER
 #define IMAGE_CROPPER
-#include <iostream>
-#include <gtkmm-3.0/gtkmm.h>
 #include "image.hpp"
+#include <gtkmm-3.0/gtkmm.h>
+#include <iostream>
 
 // Image cropper class
 class ImageCropper : public Gtk::Dialog {

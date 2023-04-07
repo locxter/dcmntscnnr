@@ -1,9 +1,9 @@
 #ifndef IMAGE_PREVIEWER
 #define IMAGE_PREVIEWER
-#include <iostream>
-#include <gtkmm-3.0/gtkmm.h>
-#include "image.hpp"
 #include "image-cropper.hpp"
+#include "image.hpp"
+#include <gtkmm-3.0/gtkmm.h>
+#include <iostream>
 
 // Image previewer class
 class ImagePreviewer : public Gtk::ScrolledWindow {

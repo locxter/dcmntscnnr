@@ -1,7 +1,7 @@
+#include "lib/image-previewer.hpp"
+#include "lib/image.hpp"
 #include <iostream>
 #include <opencv2/opencv.hpp>
-#include "lib/image.hpp"
-#include "lib/image-previewer.hpp"
 
 // Main function
 int main(int argc, char** argv) {
@@ -70,7 +70,8 @@ int main(int argc, char** argv) {
                 // Preprocess for edge detection
                 cv::cvtColor(rawImage, preprocessedImage, cv::COLOR_BGR2GRAY);
                 cv::medianBlur(preprocessedImage, preprocessedImage, 25);
-                cv::adaptiveThreshold(preprocessedImage, preprocessedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 75, 0);
+                cv::adaptiveThreshold(preprocessedImage, preprocessedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C,
+                                      cv::THRESH_BINARY, 75, 0);
                 cv::medianBlur(preprocessedImage, preprocessedImage, 25);
                 // Perform canny edge detection
                 cv::Canny(preprocessedImage, cannyImage, 0, 0);
@@ -92,11 +93,15 @@ int main(int argc, char** argv) {
                 }
                 // Order the points for perspective transform
                 for (int j = 0; j < 4; j++) {
-                    static float xAverage = (approximation[0].x + approximation[1].x + approximation[2].x + approximation[3].x) / 4.0;
-                    static float yAverage = (approximation[0].y + approximation[1].y + approximation[2].y + approximation[3].y) / 4.0;
+                    static float xAverage =
+                        (approximation[0].x + approximation[1].x + approximation[2].x + approximation[3].x) / 4.0;
+                    static float yAverage =
+                        (approximation[0].y + approximation[1].y + approximation[2].y + approximation[3].y) / 4.0;
                     if (j == 0) {
-                        xAverage = (approximation[0].x + approximation[1].x + approximation[2].x + approximation[3].x) / 4.0;
-                        yAverage = (approximation[0].y + approximation[1].y + approximation[2].y + approximation[3].y) / 4.0;
+                        xAverage =
+                            (approximation[0].x + approximation[1].x + approximation[2].x + approximation[3].x) / 4.0;
+                        yAverage =
+                            (approximation[0].y + approximation[1].y + approximation[2].y + approximation[3].y) / 4.0;
                     }
                     if (approximation[j].x < xAverage && approximation[j].y < yAverage) {
                         // Top left
@@ -113,11 +118,15 @@ int main(int argc, char** argv) {
                     }
                 }
                 // Calculate utility values for perspective transform
-                topWidth = std::sqrt(std::pow(sortedApproximation[1].x - sortedApproximation[0].x, 2) + std::pow(sortedApproximation[1].y - sortedApproximation[0].y, 2));
-                bottomWidth = std::sqrt(std::pow(sortedApproximation[2].x - sortedApproximation[3].x, 2) + std::pow(sortedApproximation[2].y - sortedApproximation[3].y, 2));
+                topWidth = std::sqrt(std::pow(sortedApproximation[1].x - sortedApproximation[0].x, 2) +
+                                     std::pow(sortedApproximation[1].y - sortedApproximation[0].y, 2));
+                bottomWidth = std::sqrt(std::pow(sortedApproximation[2].x - sortedApproximation[3].x, 2) +
+                                        std::pow(sortedApproximation[2].y - sortedApproximation[3].y, 2));
                 width = std::max(topWidth, bottomWidth);
-                leftHeight = std::sqrt(std::pow(sortedApproximation[3].x - sortedApproximation[0].x, 2) + std::pow(sortedApproximation[3].y - sortedApproximation[0].y, 2));
-                rightHeight = std::sqrt(std::pow(sortedApproximation[2].x - sortedApproximation[1].x, 2) + std::pow(sortedApproximation[2].y - sortedApproximation[1].y, 2));
+                leftHeight = std::sqrt(std::pow(sortedApproximation[3].x - sortedApproximation[0].x, 2) +
+                                       std::pow(sortedApproximation[3].y - sortedApproximation[0].y, 2));
+                rightHeight = std::sqrt(std::pow(sortedApproximation[2].x - sortedApproximation[1].x, 2) +
+                                        std::pow(sortedApproximation[2].y - sortedApproximation[1].y, 2));
                 height = std::max(leftHeight, rightHeight);
                 sourceCoordinates[0] = cv::Point2f(sortedApproximation[0].x, sortedApproximation[0].y);
                 sourceCoordinates[1] = cv::Point2f(sortedApproximation[1].x, sortedApproximation[1].y);
@@ -132,7 +141,8 @@ int main(int argc, char** argv) {
                 cv::warpPerspective(rawImage, processedImage, transformationMatrix, cv::Size(width, height));
                 // Clean the result
                 cv::cvtColor(processedImage, processedImage, cv::COLOR_BGR2GRAY);
-                cv::adaptiveThreshold(processedImage, processedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C, cv::THRESH_BINARY, 125, 25);
+                cv::adaptiveThreshold(processedImage, processedImage, 255, cv::ADAPTIVE_THRESH_GAUSSIAN_C,
+                                      cv::THRESH_BINARY, 125, 25);
                 // Update the image sorter
                 cv::imwrite(FILENAME, processedImage);
                 images[i].setPixbuf(Gdk::Pixbuf::create_from_file(FILENAME));
@@ -176,7 +186,8 @@ int main(int argc, char** argv) {
                     float scalingRatio;
                     context->save();
                     // Check for landscape document
-                    if ((float) pixbufWidth / pixbufHeight < (((float) PAGE_WIDTH / PAGE_HEIGHT) + (PAGE_HEIGHT / PAGE_WIDTH)) / 2) {
+                    if ((float) pixbufWidth / pixbufHeight <
+                        (((float) PAGE_WIDTH / PAGE_HEIGHT) + (PAGE_HEIGHT / PAGE_WIDTH)) / 2) {
                         pageWidth = PAGE_WIDTH;
                         pageHeight = PAGE_HEIGHT;
                     } else {

@@ -43,8 +43,10 @@ void ImagePreviewer::setImages(std::vector<Image> images) {
         // Fill the available space
         drawingAreas[i].signal_draw().connect([=](const Cairo::RefPtr<Cairo::Context>& context) -> bool {
             int height = this->drawingAreas[i].get_height();
-            float aspectRatio = (float) this->images[i].getPixbuf()->get_width() / this->images[i].getPixbuf()->get_height();
-            Gdk::Cairo::set_source_pixbuf(context, this->images[i].getPixbuf()->scale_simple(std::round(aspectRatio * height), height, Gdk::INTERP_BILINEAR));
+            float aspectRatio =
+                (float) this->images[i].getPixbuf()->get_width() / this->images[i].getPixbuf()->get_height();
+            Gdk::Cairo::set_source_pixbuf(context, this->images[i].getPixbuf()->scale_simple(
+                                                       std::round(aspectRatio * height), height, Gdk::INTERP_BILINEAR));
             context->paint();
             this->drawingAreas[i].set_size_request(std::round(aspectRatio * height), -1);
             return true;

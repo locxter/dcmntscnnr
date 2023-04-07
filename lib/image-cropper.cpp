@@ -51,7 +51,8 @@ ImageCropper::ImageCropper(Gtk::Window& parent) : Gtk::Dialog("Image cropper", p
     drawingArea.signal_draw().connect([&](const Cairo::RefPtr<Cairo::Context>& context) -> bool {
         int height = drawingArea.get_height();
         float aspectRatio = (float) image.getPixbuf()->get_width() / image.getPixbuf()->get_height();
-        Gdk::Cairo::set_source_pixbuf(context, image.getPixbuf()->scale_simple(std::round(aspectRatio * height), height, Gdk::INTERP_BILINEAR));
+        Gdk::Cairo::set_source_pixbuf(
+            context, image.getPixbuf()->scale_simple(std::round(aspectRatio * height), height, Gdk::INTERP_BILINEAR));
         context->paint();
         // Draw the selected area
         context->set_source_rgba(0, 255, 0, 0.2);
@@ -64,7 +65,8 @@ ImageCropper::ImageCropper(Gtk::Window& parent) : Gtk::Dialog("Image cropper", p
         // Draw the corners
         for (int i = 0; i < 4; i++) {
             context->set_source_rgb(0, 255, 0);
-            context->arc(aspectRatio * height * corners[i][0], height - (corners[i][1] * height), std::max(height * 0.005, 4.0), 0, 2 * M_PI);
+            context->arc(aspectRatio * height * corners[i][0], height - (corners[i][1] * height),
+                         std::max(height * 0.005, 4.0), 0, 2 * M_PI);
             context->fill();
         }
         drawingArea.set_size_request(std::round(aspectRatio * height), -1);
